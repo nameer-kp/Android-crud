@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private String TAG="SQLite CRUD";
     //reference for all elements in the layout
@@ -52,21 +55,29 @@ public class MainActivity extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                CustomerModel customerModel;
                 try {
-                    CustomerModel customerModel = new CustomerModel(-1, et_name.getText().toString(),Integer.parseInt(et_age.getText().toString()),sw_active.isChecked());
+                     customerModel = new CustomerModel(-1, et_name.getText().toString(),Integer.parseInt(et_age.getText().toString()),sw_active.isChecked());
                     Toast.makeText(MainActivity.this, customerModel.toString(), Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "Enter Valid Data", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onClick: Exception Catched Number Format Exception");
+                    customerModel = new CustomerModel(-1,"error",0,false);
                 }
+                //creating database handler object
+                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
+                //calling addOne to Insert it into datebase
+                boolean isSuccess=dataBaseHelper.addOne(customerModel);
+                Log.d(TAG, "onClick: Adding to database"+isSuccess);
             }
 
         });
         btn_viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this,"Button View All Pressed",5).show();
+                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
+                List<CustomerModel> list= dataBaseHelper.getList();
+                Toast.makeText(MainActivity.this,list.toString(),5).show();
             }
         });
     }
