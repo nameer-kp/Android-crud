@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SQLITE CRUD</string>
+    <string name="CustomerName">Customer Name</string>
+    <string name="Age">Age</string>
+    <string name="CustomerStatus">Active Customer</string>
+    <string name="ButtonViewAll">View All</string>
+    <string name="ButtonAdd">Add</string>
 </resources>
