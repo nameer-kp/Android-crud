@@ -8,6 +8,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -36,19 +37,9 @@ public class MainActivity extends AppCompatActivity {
         et_name =findViewById(R.id.et_name);
 
 //        //recyler view specifics
-//        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView = findViewById(R.id.rv_customerList);
 //
-//        // use this setting to improve performance if you know that changes
-//        // in content do not change the layout size of the RecyclerView
-//        recyclerView.setHasFixedSize(true);
 //
-//        // use a linear layout manager
-//        layoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(layoutManager);
-//
-//        // specify an adapter (see also next example)
-//        mAdapter = new MyAdapter(myDataset);
-//        recyclerView.setAdapter(mAdapter);
 
         //button listeners for buttons
 
@@ -77,7 +68,25 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
                 List<CustomerModel> list= dataBaseHelper.getList();
-                Toast.makeText(MainActivity.this,list.toString(),5).show();
+                MyAdapter myAdapter = new MyAdapter(list,MainActivity.this);
+               // Toast.makeText(MainActivity.this,list.toString(),5).show();
+
+
+//                 use this setting to improve performance if you know that changes
+                // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+
+
+
+        // specify an adapter (see also next example)
+                recyclerView.setAdapter(myAdapter);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+                //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+
+
             }
         });
     }
