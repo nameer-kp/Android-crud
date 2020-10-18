@@ -18,8 +18,17 @@ public class MainActivity extends AppCompatActivity {
     private String TAG="SQLite CRUD";
     //reference for all elements in the layout
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private MyAdapter myAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    private DataBaseHelper dataBaseHelper;
+
+    public void setRemoveCustomerModel(CustomerModel removeCustomerModel) {
+        this.removeCustomerModel = removeCustomerModel;
+    }
+
+    private CustomerModel removeCustomerModel;
+
     EditText et_name,et_age;
     Button btn_add,btn_viewAll;
     Switch sw_active;
@@ -38,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
 //        //recyler view specifics
         recyclerView = findViewById(R.id.rv_customerList);
-//
+//      //getting database helper
+        dataBaseHelper= new DataBaseHelper(MainActivity.this);
+        viewOnRecycler(dataBaseHelper);
 //
 
         //button listeners for buttons
@@ -49,16 +60,17 @@ public class MainActivity extends AppCompatActivity {
                 CustomerModel customerModel;
                 try {
                      customerModel = new CustomerModel(-1, et_name.getText().toString(),Integer.parseInt(et_age.getText().toString()),sw_active.isChecked());
-                    Toast.makeText(MainActivity.this, customerModel.toString(), Toast.LENGTH_SHORT).show();
+
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "Enter Valid Data", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onClick: Exception Catched Number Format Exception");
                     customerModel = new CustomerModel(-1,"error",0,false);
                 }
-                //creating database handler object
-                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
                 //calling addOne to Insert it into datebase
                 boolean isSuccess=dataBaseHelper.addOne(customerModel);
+                if(isSuccess){
+                    viewOnRecycler(dataBaseHelper);
+                }
                 Log.d(TAG, "onClick: Adding to database"+isSuccess);
             }
 
@@ -66,14 +78,19 @@ public class MainActivity extends AppCompatActivity {
         btn_viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DataBaseHelper dataBaseHelper = new DataBaseHelper(MainActivity.this);
-                List<CustomerModel> list= dataBaseHelper.getList();
-                MyAdapter myAdapter = new MyAdapter(list,MainActivity.this);
-               // Toast.makeText(MainActivity.this,list.toString(),5).show();
+
+                 viewOnRecycler(dataBaseHelper);
+                // Toast.makeText(MainActivity.this,list.toString(),5).show();
 
 
 //                 use this setting to improve performance if you know that changes
-                // in content do not change the layout size of the RecyclerView
+                }
+        });
+    }
+
+    private void viewOnRecycler(DataBaseHelper dataBaseHelper) {
+        List<CustomerModel> list= dataBaseHelper.getList();
+        myAdapter= new MyAdapter(list,MainActivity.this);
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
@@ -81,17 +98,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         // specify an adapter (see also next example)
-                recyclerView.setAdapter(myAdapter);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
-                //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(linearLayoutManager);
-
-
-            }
-        });
+        recyclerView.setAdapter(myAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+        //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
 
 
 
-    }
+}
